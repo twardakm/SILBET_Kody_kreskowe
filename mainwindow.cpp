@@ -72,3 +72,18 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_testButton_clicked()
+{
+    QFile file;
+    QDir::setCurrent(this->files_dir.path());
+    file.setFileName(this->today.toString("yyyy-MM-dd") + ".txt"); //filename must be easy to sort
+    //when fail
+    if(!file.open(QIODevice::Append))
+    {
+        QMessageBox::critical(this, "Błąd zapisu do pliku", "Coś poszło nie tak, nie udało się zapisać do pliku."
+                              "Zeskanuj towar ponownie");
+        return;
+    }
+    file.close();
+}

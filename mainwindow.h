@@ -24,6 +24,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void on_testButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QDir files_dir;
