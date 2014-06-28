@@ -26,6 +26,8 @@ public:
 
 private slots:
     void on_testButton_clicked();
+    void on_actionAbout_Qt_clicked();
+    void on_actionO_autorze_clicked();
 
 private:
     Ui::MainWindow *ui;
