@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = SILBET_Kody_kreskowe
 TEMPLATE = app
+RC_FILE = app.rc
 
 
 SOURCES += main.cpp\
