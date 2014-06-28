@@ -85,5 +85,11 @@ void MainWindow::on_testButton_clicked()
                               "Zeskanuj towar ponownie");
         return;
     }
-    file.close();
+    else
+    {
+        QTextStream out(&file);
+        out << "Kod kreskowy" << '\t' << QTime::currentTime().toString("hh:mm:ss") << '\r' << '\n';
+
+        file.close();
+    }
 }
