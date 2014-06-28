@@ -39,7 +39,31 @@ MainWindow::MainWindow(QWidget *parent) :
         else
         {
             QTextStream out(&file);
-            out << this->files_dir.absolutePath() << ";";
+            out << this->files_dir.absolutePath();
+        }
+    }
+    else
+    {
+        QFile file("ustawienia.txt");
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QMessageBox::critical(this, "Bład otworzenia pliku", "Uruchom program ponownie");
+            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection); //closing when fail
+            return;
+        }
+        else
+        {
+            QByteArray line = file.readLine();
+            this->files_dir.setPath(line);
+
+            if(!files_dir.exists() || files_dir.path() == "")
+            {
+                QMessageBox::critical(this, "Błędny plik konfiguracyjny", "Uruchom program ponownie");
+                QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection); //closing when fail
+                return;
+            }
+
+            qDebug() << this->files_dir.path();
         }
     }
 }

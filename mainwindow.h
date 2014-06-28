@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;
