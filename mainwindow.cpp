@@ -66,26 +66,11 @@ MainWindow::MainWindow(QWidget *parent) :
             qDebug() << this->files_dir.path();
         }
     }
-
-    //connectors to actions
-    connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(on_actionAbout_Qt_clicked()));
-    connect(ui->actionO_autorze, SIGNAL(triggered()), this, SLOT(on_actionO_autorze_clicked()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::on_actionO_autorze_clicked()
-{
-    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
-                                            "E-mail: <b>twardakm@gmail.com</b>");
-}
-
-void MainWindow::on_actionAbout_Qt_clicked()
-{
-    QMessageBox::aboutQt(this);
 }
 
 void MainWindow::on_testButton_clicked()
@@ -107,4 +92,15 @@ void MainWindow::on_testButton_clicked()
 
         file.close();
     }
+}
+
+void MainWindow::on_actionO_autorze_triggered()
+{
+    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
+                                            "E-mail: <b>twardakm@gmail.com</b>");
+}
+
+void MainWindow::on_actionAbout_Qt_triggered()
+{
+    QMessageBox::aboutQt(this);
 }
