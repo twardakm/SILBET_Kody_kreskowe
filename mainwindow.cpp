@@ -12,6 +12,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->today = QDate::currentDate();
     ui->date->setText(this->today.toString("dd-MM-yyyy"));
 
+    this->timer.setSingleShot(true); //single shot timer
+    this->timer.setInterval(TIME_INTERVAL);
+    connect(&this->timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+
     //finding a path to save logs
 
     if(!QFile::exists("ustawienia.txt"))
@@ -80,6 +84,8 @@ void MainWindow::get_key(int key)
     this->buffer[this->actual_buf] = key;
 
     this->actual_buf_inc();
+
+    this->timer.start();
 }
 
 void MainWindow::get_line_feed()
@@ -103,17 +109,12 @@ void MainWindow::get_line_feed()
         barcode.append(QString::number(temp[i], 10));
 
     qDebug() << "Barcode: " << barcode;
+    this->timer.stop();
+
+    this->save_barcode(barcode);
 }
 
-void MainWindow::actual_buf_inc()
-{
-    if(this->actual_buf >= BUFFER_LEN - 1)
-        this->actual_buf = 0;
-    else
-        this->actual_buf++;
-}
-
-void MainWindow::on_testButton_clicked()
+void MainWindow::save_barcode(QString barcode)
 {
     QFile file;
     QDir::setCurrent(this->files_dir.path());
@@ -146,12 +147,27 @@ void MainWindow::on_testButton_clicked()
         else
         {
             QTextStream out(&file);
-            out << number_of_lines << '\t' << "Kod kreskowy" <<
+            out << number_of_lines << '\t' << barcode <<
                    '\t' << QTime::currentTime().toString("hh:mm:ss") << '\r' << '\n';
 
             file.close();
         }
     }
+}
+
+void MainWindow::timer_timeout()
+{
+    for (int i = 0; i < BUFFER_LEN; i++)
+        this->buffer[i] = -1; //to make sure program doesn't save it
+    this->actual_buf = 0;
+}
+
+void MainWindow::actual_buf_inc()
+{
+    if(this->actual_buf >= BUFFER_LEN - 1)
+        this->actual_buf = 0;
+    else
+        this->actual_buf++;
 }
 
 void MainWindow::on_actionO_autorze_triggered()
