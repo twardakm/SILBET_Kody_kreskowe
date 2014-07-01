@@ -12,6 +12,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QKeyEvent>
+#include <windows.h>
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    friend LRESULT CALLBACK MyLowLevelKeyBoardProc(int nCode, WPARAM wParam, LPARAM lParam);
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
