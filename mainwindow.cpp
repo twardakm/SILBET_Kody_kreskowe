@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->actual_buf = 0;
+
     this->today = QDate::currentDate();
     ui->date->setText(this->today.toString("dd-MM-yyyy"));
 
@@ -75,14 +77,40 @@ MainWindow::~MainWindow()
 
 void MainWindow::get_key(int key)
 {
-    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
-                                            "E-mail: <b>twardakm@gmail.com</b>");
+    this->buffer[this->actual_buf] = key;
+
+    this->actual_buf_inc();
 }
 
 void MainWindow::get_line_feed()
 {
-    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
-                                            "E-mail: <b>twardakm@gmail.com</b>");
+    int temp[BUFFER_LEN];
+
+    for (int i = 0; i < BUFFER_LEN; i++)
+    {
+        temp[i] = this->buffer[this->actual_buf]; //actual buffer is always one more than last digit place
+        if (temp[i] < 0 || temp[i] > 9) //it isn't barcode
+            return;
+        this->buffer[this->actual_buf] = -1;
+
+        this->actual_buf_inc();
+    }
+    this->actual_buf = 0;
+
+    QString barcode;
+    //I'm sure it is barcode, so I save it
+    for (int i = 0; i < BUFFER_LEN; i++)
+        barcode.append(QString::number(temp[i], 10));
+
+    qDebug() << "Barcode: " << barcode;
+}
+
+void MainWindow::actual_buf_inc()
+{
+    if(this->actual_buf >= BUFFER_LEN - 1)
+        this->actual_buf = 0;
+    else
+        this->actual_buf++;
 }
 
 void MainWindow::on_testButton_clicked()
