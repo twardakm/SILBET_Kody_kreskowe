@@ -6,15 +6,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->readers_count = 0;
+    this->connect_serial_ports(false); //connect all serial ports with barcode readers without message box
     this->actual_buf = 0;
 
     this->today = QDate::currentDate();
     ui->date->setText(this->today.toString("dd-MM-yyyy"));
 
-    this->timer.setSingleShot(true); //single shot timer
+    this->timer.setSingleShot(false); //continous timer
     this->timer.setInterval(TIME_INTERVAL);
     connect(&this->timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
+    this->timer.start();
 
     //finding a path to save logs
 
@@ -77,6 +79,28 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::connect_serial_ports(bool info)
+{
+    int readers_count_old = this->readers_count;
+    this->readers_count = 0;
+
+    //foreach from qt wiki
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        if (info.description() == "" && info.manufacturer() == "")
+        {
+            this->readers_count++;
+        }
+
+    }
+    if (this->readers_count > readers_count_old && info) //false only when first time running
+        QMessageBox::information(this, "Nowy czytnik", "Poprawnie skonfigurowany nowy czytnik");
+    else if (this->readers_count < readers_count_old)
+        QMessageBox::warning(this, "Odłączono czytnik", "Czytnik został odłączony");
+
+    ui->readers_count->setText(QString::number(this->readers_count));
 }
 
 void MainWindow::get_key(int key)
@@ -157,9 +181,7 @@ void MainWindow::save_barcode(QString barcode)
 
 void MainWindow::timer_timeout()
 {
-    for (int i = 0; i < BUFFER_LEN; i++)
-        this->buffer[i] = -1; //to make sure program doesn't save it
-    this->actual_buf = 0;
+    this->connect_serial_ports();
 }
 
 void MainWindow::actual_buf_inc()

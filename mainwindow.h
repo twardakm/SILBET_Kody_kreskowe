@@ -13,10 +13,11 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QTimer>
-#include <windows.h>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 #define BUFFER_LEN 13 //amount of digits in barcode
-#define TIME_INTERVAL 100 //time needed to clear buffer (user can't write so fast)
+#define TIME_INTERVAL 5000 //how often will be checked new devices
 
 namespace Ui {
 class MainWindow;
@@ -43,6 +44,8 @@ private:
     void get_line_feed(); //if line feed is pressed
     void actual_buf_inc();
 
+    void connect_serial_ports(bool info = true);
+
     void save_barcode(QString barcode);
 
     Ui::MainWindow *ui;
@@ -51,6 +54,7 @@ private:
     QTimer timer;
     int buffer[BUFFER_LEN];
     int actual_buf;
+    int readers_count;
 };
 
 #endif // MAINWINDOW_H
