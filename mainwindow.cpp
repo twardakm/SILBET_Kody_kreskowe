@@ -79,7 +79,7 @@ void MainWindow::on_testButton_clicked()
     QDir::setCurrent(this->files_dir.path());
     file.setFileName(this->today.toString("yyyy-MM-dd") + ".txt"); //filename must be easy to sort
     //when fail
-    if(!file.open(QIODevice::Append))
+    if(!file.open(QIODevice::ReadOnly) && file.exists())
     {
         QMessageBox::critical(this, "Błąd zapisu do pliku", "Coś poszło nie tak, nie udało się zapisać do pliku."
                               "Zeskanuj towar ponownie");
@@ -87,11 +87,43 @@ void MainWindow::on_testButton_clicked()
     }
     else
     {
-        QTextStream out(&file);
-        out << "Kod kreskowy" << '\t' << QTime::currentTime().toString("hh:mm:ss") << '\r' << '\n';
+        //first - reading number of lines
+        int number_of_lines = 1;
+        QTextStream in(&file);
+        while( !in.atEnd())
+        {
+            in.readLine();
+            number_of_lines++;
+        }
+        file.close(); //close ReadOnly, open Append
 
-        file.close();
+        if(!file.open(QIODevice::Append | QIODevice::Text))
+        {
+            QMessageBox::critical(this, "Błąd zapisu do pliku", "Coś poszło nie tak, nie udało się zapisać do pliku."
+                                  "Zeskanuj towar ponownie");
+            return;
+        }
+        else
+        {
+            QTextStream out(&file);
+            out << number_of_lines << '\t' << "Kod kreskowy" <<
+                   '\t' << QTime::currentTime().toString("hh:mm:ss") << '\r' << '\n';
+
+            file.close();
+        }
     }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+            on_actionO_autorze_triggered();
+}
+
+void MainWindow::test_function()
+{
+    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
+                                            "E-mail: <b>twardakm@gmail.com</b>");
 }
 
 void MainWindow::on_actionO_autorze_triggered()
