@@ -25,8 +25,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
-    friend LRESULT CALLBACK MyLowLevelKeyBoardProc(int nCode, WPARAM wParam, LPARAM lParam);
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
