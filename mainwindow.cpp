@@ -73,6 +73,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::get_key(int key)
+{
+    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
+                                            "E-mail: <b>twardakm@gmail.com</b>");
+}
+
+void MainWindow::get_line_feed()
+{
+    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
+                                            "E-mail: <b>twardakm@gmail.com</b>");
+}
+
 void MainWindow::on_testButton_clicked()
 {
     QFile file;
@@ -112,18 +124,6 @@ void MainWindow::on_testButton_clicked()
             file.close();
         }
     }
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Escape)
-            on_actionO_autorze_triggered();
-}
-
-void MainWindow::test_function()
-{
-    QMessageBox::about(this, "O autorze", "Autor: <b>Marcin Twardak</b> <br>"
-                                            "E-mail: <b>twardakm@gmail.com</b>");
 }
 
 void MainWindow::on_actionO_autorze_triggered()

@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <windows.h>
+
+#define LINE_FEED '\r'
+
 #pragma comment(lib, "user32.lib")
 
 HHOOK hHook = NULL;
@@ -44,9 +47,14 @@ LRESULT CALLBACK MyLowLevelKeyBoardProc(int nCode, WPARAM wParam, LPARAM lParam)
         ToUnicodeEx(cKey.vkCode, cKey.scanCode, keyboard_state, buffer, 4, 0, keyboard_layout);
         buffer[4] = L'\0';
 
+        QString temp = QString::fromUtf16((ushort*)buffer);
+
         //Print the output
-        qDebug() << "Key: " << QString::fromUtf16((ushort*)buffer);
-        address->test_function();
+        qDebug() << "Key: " << temp;
+        if (temp[0].isDigit())
+            address->get_key(temp[0].digitValue());
+        else if (temp[0] == QChar(LINE_FEED))
+            address->get_line_feed();
     }
 
     return CallNextHookEx(hHook, nCode, wParam, lParam);

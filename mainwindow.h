@@ -28,8 +28,6 @@ public:
     ~MainWindow();
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
-    void test_function();
 
 private slots:
     void on_testButton_clicked();
@@ -39,6 +37,9 @@ private slots:
     void on_actionAbout_Qt_triggered();
 
 private:
+    void get_key(int key);
+    void get_line_feed(); //if line feed is pressed
+
     Ui::MainWindow *ui;
     QDir files_dir;
     QDate today;
