@@ -14,8 +14,10 @@ RC_FILE = app.rc
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    keyboard_hook.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    keyboard_hook.h
 
 FORMS    += mainwindow.ui
