@@ -18,6 +18,7 @@
 
 #define TIME_INTERVAL 5000 //how often will be checked new devices
 #define MAX_DEVICES 10
+#define READER_INFO info.description() == "" && info.manufacturer() == ""
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,7 @@ private slots:
 
 private:
     void connect_serial_ports(bool info = true);
+    bool open_connections();
 
     void save_barcode(QString barcode);
 
@@ -49,6 +51,9 @@ private:
     QDate today;
     QTimer timer;
     int readers_count;
+    bool error; //if error is true open connections is making again
+
+    QSerialPort devices[MAX_DEVICES];
 };
 
 #endif // MAINWINDOW_H

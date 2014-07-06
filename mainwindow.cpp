@@ -77,6 +77,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    //closing connections
+    for (int i = 0; i < MAX_DEVICES; i++)
+    {
+        if (this->devices[i].isOpen())
+            this->devices[i].close();
+
+    }
     delete ui;
 }
 
@@ -88,18 +95,74 @@ void MainWindow::connect_serial_ports(bool info)
     //foreach from qt wiki
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-        if (info.description() == "" && info.manufacturer() == "")
+        if (READER_INFO)
         {
             this->readers_count++;
+            if (this->readers_count > MAX_DEVICES) //too many devices
+            {
+                QMessageBox::critical(this, "Zbyt dużo urządzeń", "Zbyt dużo urządzeń. Odłącz urządzenie i uruchom program ponownie");
+                QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+                return;
+            }
         }
 
     }
-    if (this->readers_count > readers_count_old && info) //false only when first time running
-        QMessageBox::information(this, "Nowy czytnik", "Poprawnie skonfigurowano nowy czytnik");
+    if (!info || error) //only first time or if error!
+    {
+        if(!this->open_connections())
+            QMessageBox::warning(this, "Błąd", "Nie można było połączyć się z czytnikiem. <br>"
+                                 "Jeśli komunikat będzie się powtarzał uruchom ponownie aplikację");
+    }
+    else if (this->readers_count > readers_count_old && info) //false only when first time running
+    {
+        if(!this->open_connections())
+            QMessageBox::warning(this, "Błąd", "Nie można było połączyć się z czytnikiem. <br>"
+                                 "Jeśli komunikat będzie się powtarzał uruchom ponownie aplikację");
+        else
+            QMessageBox::information(this, "Nowy czytnik", "Poprawnie skonfigurowano nowy czytnik");
+    }
     else if (this->readers_count < readers_count_old)
-        QMessageBox::warning(this, "Odłączono czytnik", "Czytnik został odłączony");
+    {
+        //close old connections
+        for (int i = 0; i < MAX_DEVICES; i++)
+            if (this->devices[i].isOpen())
+                this->devices[i].close();
+
+        if(!this->open_connections())
+            QMessageBox::warning(this, "Błąd", "Nie można było połączyć się z czytnikiem. <br>"
+                                 "Jeśli komunikat będzie się powtarzał uruchom ponownie aplikację");
+        else
+            QMessageBox::warning(this, "Odłączono czytnik", "Czytnik został odłączony");
+    }
 
     ui->readers_count->setText(QString::number(this->readers_count));
+}
+
+bool MainWindow::open_connections()
+{
+    int i = 0;
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        if (READER_INFO)
+        {
+            if (this->devices[i].isOpen())
+                this->devices[i].close();
+            //open_connection
+            this->devices[i].setPort(info);
+            if (!this->devices[i].setBaudRate(QSerialPort::Baud9600) ||
+                !this->devices[i].setFlowControl(QSerialPort::NoFlowControl) ||
+                !this->devices[i].setParity(QSerialPort::NoParity)
+            )
+                return false; //something went wront
+
+            else if ( !this->devices[i].open(QIODevice::ReadOnly))
+                return false;
+
+            i++;
+        }
+
+    }
+    return true;
 }
 
 void MainWindow::save_barcode(QString barcode)
