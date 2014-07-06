@@ -103,41 +103,6 @@ void MainWindow::connect_serial_ports(bool info)
     ui->readers_count->setText(QString::number(this->readers_count));
 }
 
-void MainWindow::get_key(int key)
-{
-    this->buffer[this->actual_buf] = key;
-
-    this->actual_buf_inc();
-
-    this->timer.start();
-}
-
-void MainWindow::get_line_feed()
-{
-    int temp[BUFFER_LEN];
-
-    for (int i = 0; i < BUFFER_LEN; i++)
-    {
-        temp[i] = this->buffer[this->actual_buf]; //actual buffer is always one more than last digit place
-        if (temp[i] < 0 || temp[i] > 9) //it isn't barcode
-            return;
-        this->buffer[this->actual_buf] = -1;
-
-        this->actual_buf_inc();
-    }
-    this->actual_buf = 0;
-
-    QString barcode;
-    //I'm sure it is barcode, so I save it
-    for (int i = 0; i < BUFFER_LEN; i++)
-        barcode.append(QString::number(temp[i], 10));
-
-    qDebug() << "Barcode: " << barcode;
-    this->timer.stop();
-
-    this->save_barcode(barcode);
-}
-
 void MainWindow::save_barcode(QString barcode)
 {
     QFile file;
