@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->readers_count = 0;
     this->connect_serial_ports(false); //connect all serial ports with barcode readers without message box
-    this->actual_buf = 0;
 
     this->today = QDate::currentDate();
     ui->date->setText(this->today.toString("dd-MM-yyyy"));
@@ -96,7 +95,7 @@ void MainWindow::connect_serial_ports(bool info)
 
     }
     if (this->readers_count > readers_count_old && info) //false only when first time running
-        QMessageBox::information(this, "Nowy czytnik", "Poprawnie skonfigurowany nowy czytnik");
+        QMessageBox::information(this, "Nowy czytnik", "Poprawnie skonfigurowano nowy czytnik");
     else if (this->readers_count < readers_count_old)
         QMessageBox::warning(this, "Odłączono czytnik", "Czytnik został odłączony");
 
@@ -147,14 +146,6 @@ void MainWindow::save_barcode(QString barcode)
 void MainWindow::timer_timeout()
 {
     this->connect_serial_ports();
-}
-
-void MainWindow::actual_buf_inc()
-{
-    if(this->actual_buf >= BUFFER_LEN - 1)
-        this->actual_buf = 0;
-    else
-        this->actual_buf++;
 }
 
 void MainWindow::on_actionO_autorze_triggered()

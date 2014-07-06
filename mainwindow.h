@@ -16,8 +16,8 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-#define BUFFER_LEN 13 //amount of digits in barcode
 #define TIME_INTERVAL 5000 //how often will be checked new devices
+#define MAX_DEVICES 10
 
 namespace Ui {
 class MainWindow;
@@ -40,10 +40,6 @@ private slots:
     void timer_timeout();
 
 private:
-    void get_key(int key);
-    void get_line_feed(); //if line feed is pressed
-    void actual_buf_inc();
-
     void connect_serial_ports(bool info = true);
 
     void save_barcode(QString barcode);
@@ -52,8 +48,6 @@ private:
     QDir files_dir;
     QDate today;
     QTimer timer;
-    int buffer[BUFFER_LEN];
-    int actual_buf;
     int readers_count;
 };
 
