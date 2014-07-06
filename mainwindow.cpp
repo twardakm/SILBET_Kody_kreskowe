@@ -6,6 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //connect all readers with slot
+    for (int i = 0; i < MAX_DEVICES; i++)
+        connect(&this->devices[i], SIGNAL(readyRead()), this, SLOT(newData()));
+
     this->readers_count = 0;
     this->connect_serial_ports(false); //connect all serial ports with barcode readers without message box
 
@@ -16,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->timer.setInterval(TIME_INTERVAL);
     connect(&this->timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
     this->timer.start();
+
+    this->exe_dir = QDir::currentPath();
 
     //finding a path to save logs
 
@@ -165,6 +171,24 @@ bool MainWindow::open_connections()
     return true;
 }
 
+void MainWindow::newData()
+{
+    char *temp = new char[MAX_LENGHT];
+    QString str;
+    QStringList list;
+
+    for (int i = 0; i < MAX_DEVICES; i++)
+    {
+        if (this->devices[i].canReadLine())
+        {
+            this->devices[i].read(temp, MAX_LENGHT);
+            str = temp;
+            list = str.split('\r');
+            this->save_barcode(list.at(0));
+        }
+    }
+}
+
 void MainWindow::save_barcode(QString barcode)
 {
     QFile file;
@@ -220,4 +244,25 @@ void MainWindow::on_actionO_autorze_triggered()
 void MainWindow::on_actionAbout_Qt_triggered()
 {
     QMessageBox::aboutQt(this);
+}
+
+void MainWindow::on_actionFolder_zapisu_triggered()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Wybierz folder"),
+                                                     QDir::homePath(),
+                                                     QFileDialog::ShowDirsOnly
+                                                     | QFileDialog::DontResolveSymlinks);
+    if (dir != "")
+    {
+        QDir::setCurrent(this->exe_dir.absolutePath());
+        QFile file("ustawienia.txt");
+        if(!file.open(QIODevice::WriteOnly))
+            QMessageBox::critical(this, "Błąd zapisu", "Błąd zapisu ustawień");
+        else
+        {
+            this->files_dir = dir;
+            QTextStream out(&file);
+            out << this->files_dir.absolutePath();
+        }
+    }
 }

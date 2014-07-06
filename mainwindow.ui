@@ -139,6 +139,13 @@
     <addaction name="separator"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuUstawienia">
+    <property name="title">
+     <string>Ustawienia</string>
+    </property>
+    <addaction name="actionFolder_zapisu"/>
+   </widget>
+   <addaction name="menuUstawienia"/>
    <addaction name="menuInformacje"/>
   </widget>
   <action name="actionO_autorze">
@@ -149,6 +156,11 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionFolder_zapisu">
+   <property name="text">
+    <string>Folder zapisu</string>
    </property>
   </action>
  </widget>

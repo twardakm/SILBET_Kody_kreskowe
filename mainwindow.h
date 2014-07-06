@@ -7,17 +7,20 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QString>
+#include <QStringList>
 #include <QDir>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QIODevice>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
 #define TIME_INTERVAL 5000 //how often will be checked new devices
 #define MAX_DEVICES 10
+#define MAX_LENGHT 64 //max lenght of barcode
 #define READER_INFO info.description() == "" && info.manufacturer() == ""
 
 namespace Ui {
@@ -35,10 +38,11 @@ protected:
 
 private slots:
     void on_actionO_autorze_triggered();
-
     void on_actionAbout_Qt_triggered();
-
     void timer_timeout();
+    void newData(); //new data in reader
+
+    void on_actionFolder_zapisu_triggered();
 
 private:
     void connect_serial_ports(bool info = true);
@@ -48,6 +52,7 @@ private:
 
     Ui::MainWindow *ui;
     QDir files_dir;
+    QDir exe_dir; //path to exe file
     QDate today;
     QTimer timer;
     int readers_count;
