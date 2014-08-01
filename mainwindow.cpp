@@ -184,7 +184,11 @@ void MainWindow::newData()
             this->devices[i].read(temp, MAX_LENGHT);
             str = temp;
             list = str.split('\r');
-            this->save_barcode(list.at(0));
+            if (this->last_barcode != list.at(0)) // to avoid double barcodes
+            {
+                this->save_barcode(list.at(0));
+                this->last_barcode = list.at(0);
+            }
         }
     }
 }

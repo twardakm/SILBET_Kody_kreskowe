@@ -45,6 +45,8 @@ private slots:
     void on_actionFolder_zapisu_triggered();
 
 private:
+    QString last_barcode; //to avoid double barcodes
+
     void connect_serial_ports(bool info = true);
     bool open_connections();
 
