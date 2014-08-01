@@ -5,6 +5,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    //refresh drivers
+    system ("\"C:\\Program Files\\Symbol\\Symbol Scanners\\Symbol Update driver.exe\"");
     ui->setupUi(this);
     //connect all readers with slot
     for (int i = 0; i < MAX_DEVICES; i++)

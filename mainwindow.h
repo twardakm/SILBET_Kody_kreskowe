@@ -15,6 +15,7 @@
 #include <QKeyEvent>
 #include <QTimer>
 #include <QIODevice>
+#include <QProcess>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
